@@ -4,7 +4,7 @@ let database
 
 async function connect () {
     try {
-        const uri = 'mongodb+srv://mde50526:topicoklat@cluster0.oefsh.mongodb.net/test?retryWrites=true&w=majority'
+        const uri = `mongodb+srv://mde50526:${process.env.MONGODB_PASSWORD}@cluster0.oefsh.mongodb.net/test?retryWrites=true&w=majority`
         
         const client = new MongoClient(uri)
 
