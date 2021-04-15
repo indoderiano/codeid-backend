@@ -11,8 +11,7 @@ class User {
     static update (id, update) {
         return getDatabase().collection('users').updateOne(
             { _id: new ObjectId(id) },
-            { $set: update },
-            { upsert: true }
+            { $set: update }
         )
     }
     static delete (id) {
