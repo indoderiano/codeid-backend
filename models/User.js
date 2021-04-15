@@ -2,13 +2,20 @@ const { ObjectId } = require('bson')
 const {getDatabase} = require('../config/mongodb')
 
 class User {
-    static create (user) {
+    static async create (user) {
+        let _id = new ObjectId()
+        user._id = _id
+        await getDatabase().collection('proxy').insertOne({_id, emailAddress: user.emailAddress})
         return getDatabase().collection('users').insertOne(user)
     }
     static read () {
         return getDatabase().collection('users').find().toArray()
     }
-    static update (id, update) {
+    static async update (id, update) {
+        await getDatabase().collection('proxy').updateOne(
+            { _id: new ObjectId(id) },
+            { $set: {emailAddress: update.emailAddress} }
+        )
         return getDatabase().collection('users').updateOne(
             { _id: new ObjectId(id) },
             { $set: update }

@@ -1,6 +1,8 @@
 const User = require('../models/User')
 const jwt = require('jsonwebtoken')
 const {clientRedis} = require('../config/redis')
+const {getDatabase} = require('../config/mongodb')
+const { ObjectId } = require('bson')
 // const Redis = require('ioredis')
 // const redis = new Redis()
 
@@ -19,15 +21,15 @@ class ControllerUser {
     static async create (req, res) {
         console.log('create new user')
         try {
-            let {userName, accountNumber, emailAddress, identityNumber } = req.body
-            let newUser = {userName, accountNumber, emailAddress, identityNumber }
+            let { userName, accountNumber, emailAddress, identityNumber } = req.body
+            let newUser = { userName, accountNumber, emailAddress, identityNumber }
             const user = await User.create(newUser)
             await clientRedis.del('usersdata')
             // await redis.del('usersdata')
             res.json(user)
         } catch (err) {
             console.log(err)
-            res.status(500).json({message: 'Internal Server Error'})
+            res.status(500).json(err)
         }
     }
     static async read (req, res) {
@@ -51,7 +53,7 @@ class ControllerUser {
             // let usersCache = await clientRedis.get('usersdata')
         } catch (err) {
             console.log(err)
-            res.status(500).json({message: 'Internal Server Error'})
+            res.status(500).json(err)
         }
     }
     static async update (req, res) {
@@ -64,7 +66,7 @@ class ControllerUser {
             res.json(user)
         } catch (err) {
             console.log(err)
-            res.status(500).json({message: 'Internal Server Error'})
+            res.status(500).json(err)
         }
     }
     static async delete (req, res) {
@@ -76,7 +78,7 @@ class ControllerUser {
             res.json(user)
         } catch (err) {
             console.log(err)
-            res.status(500).json({message: 'Internal Server Error'})
+            res.status(500).json(err)
         }
     }
 
@@ -87,7 +89,7 @@ class ControllerUser {
             res.json(user)
         } catch (err) {
             console.log(err)
-            res.status(500).json({message: 'Internal Server Error'})
+            res.status(500).json(err)
         }
     }
     static async readByIdentityNumber (req, res) {
@@ -97,7 +99,7 @@ class ControllerUser {
             res.json(user)
         } catch (err) {
             console.log(err)
-            res.status(500).json({message: 'Internal Server Error'})
+            res.status(500).json(err)
         }
     }
 
