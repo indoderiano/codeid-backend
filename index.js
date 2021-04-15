@@ -12,7 +12,7 @@ app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 
 app.get('/', (req, res) => {
-    res.send('Code id Backend technical test server')
+    res.send('<div style="text-align: center;margin-top:40px; font-size:24px;">Code id Backend technical test server by <strong>Indo Halim</strong>')
 })
 
 const routerUser = require('./routes')
