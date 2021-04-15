@@ -2,6 +2,7 @@ const express = require('express')
 const app = express()
 const cors = require('cors')
 
+
 const PORT = process.env.PORT || 3000
 if(process.env.NODE_ENV !== 'production'){
     require('dotenv').config()
@@ -18,16 +19,19 @@ app.get('/', (req, res) => {
 const routerUser = require('./routes')
 app.use('/user', routerUser)
 
+
 const {connect} = require('./config/mongodb')
 
 connect().then(async (db) => {
-    console.log('Mongo is connected')
+    console.log('Mongo Cluster is connected')
 
-    const userCollection = db.collection('users')
+    const {clientRedis} = require('./config/redis')
 
-    const users = await userCollection.find().toArray()
-
-    console.log(users)
+    clientRedis.on("error", function(err) {
+        throw err;
+      });
+    
+    console.log('Redis server is connected')
 
     app.listen(PORT, () => {
         console.log('App is listening at port',PORT)

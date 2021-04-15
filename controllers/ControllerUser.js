@@ -1,7 +1,19 @@
 const User = require('../models/User')
 const jwt = require('jsonwebtoken')
-const Redis = require('ioredis')
-const redis = new Redis()
+const {clientRedis} = require('../config/redis')
+// const Redis = require('ioredis')
+// const redis = new Redis()
+
+// clientRedis.set('foo','bar');
+//     clientRedis.get('foo', function(err, response){
+//         if(err) {
+//             throw err;
+//             }
+//         else {
+//             console.log(response);
+//             clientRedis.quit();
+//         }
+//     });
 
 class ControllerUser {
     static async create (req, res) {
@@ -10,7 +22,8 @@ class ControllerUser {
             let {userName, accountNumber, emailAddress, identityNumber } = req.body
             let newUser = {userName, accountNumber, emailAddress, identityNumber }
             const user = await User.create(newUser)
-            await redis.del('usersdata')
+            await clientRedis.del('usersdata')
+            // await redis.del('usersdata')
             res.json(user)
         } catch (err) {
             console.log(err)
@@ -19,15 +32,23 @@ class ControllerUser {
     }
     static async read (req, res) {
         try {
-            let usersCache = await redis.get('usersdata')
-            if(usersCache){
-                console.log('return cache data')
-                res.json(JSON.parse(usersCache))
-            }else{
-                const users = await User.read()
-                await redis.set('usersdata', JSON.stringify(users))
-                res.json(users)
-            }
+            clientRedis.get('usersdata', async (err, response) => {
+                if(err){
+                    throw err
+                }else{
+                    let usersCache = response
+                    if(usersCache){
+                        console.log('return cache data')
+                        res.json(JSON.parse(usersCache))
+                    }else{
+                        const users = await User.read()
+                        await clientRedis.set('usersdata', JSON.stringify(users))
+                        // await redis.set('usersdata', JSON.stringify(users))
+                        res.json(users)
+                    }
+                }
+            })
+            // let usersCache = await clientRedis.get('usersdata')
         } catch (err) {
             console.log(err)
             res.status(500).json({message: 'Internal Server Error'})
@@ -38,7 +59,8 @@ class ControllerUser {
         let update = req.body
         try {
             const user = await User.update(id, update)
-            await redis.del('usersdata')
+            await clientRedis.del('usersdata')
+            // await redis.del('usersdata')
             res.json(user)
         } catch (err) {
             console.log(err)
@@ -49,7 +71,8 @@ class ControllerUser {
         let {id} = req.params
         try {
             const user = await User.delete(id)
-            await redis.del('usersdata')
+            await clientRedis.del('usersdata')
+            // await redis.del('usersdata')
             res.json(user)
         } catch (err) {
             console.log(err)
