@@ -21,9 +21,12 @@ class User {
             { $set: update }
         )
     }
-    static delete (id) {
+    static async delete (id) {
         console.log('delete user')
         console.log(id)
+        await getDatabase().collection('proxy').deleteOne(
+            { _id: new ObjectId(id) }
+        )
         return getDatabase().collection('users').deleteOne(
             { _id: new ObjectId(id) }
         )
