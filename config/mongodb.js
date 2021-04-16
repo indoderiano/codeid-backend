@@ -14,6 +14,25 @@ async function connect () {
 
         db.collection('proxy').createIndex( {"emailAddress": 1}, {unique: true} )
 
+        // db.runCommand( {
+        //     collMod: "users",
+        //     validator: { $jsonSchema: {
+        //        bsonType: "object",
+        //        required: [ "userName", "accountNumber", "emailAddress", "identityNumber" ],
+        //        properties: {
+        //           accountNumber: {
+        //              bsonType: "int",
+        //              description: "must be a number and is required"
+        //           },
+        //           identityNumber: {
+        //              bsonType: "int",
+        //              description: "must be a number and is required"
+        //           }
+        //        }
+        //     } },
+        //     validationLevel: "moderate"
+        //  } )
+
         database = db
 
         return db

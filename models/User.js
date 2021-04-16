@@ -1,5 +1,5 @@
 const { ObjectId } = require('bson')
-const {getDatabase} = require('../config/mongodb')
+const { getDatabase } = require('../config/mongodb')
 
 class User {
     static async create (user) {

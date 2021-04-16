@@ -1,21 +1,6 @@
 const User = require('../models/User')
 const jwt = require('jsonwebtoken')
 const {clientRedis} = require('../config/redis')
-const {getDatabase} = require('../config/mongodb')
-const { ObjectId } = require('bson')
-// const Redis = require('ioredis')
-// const redis = new Redis()
-
-// clientRedis.set('foo','bar');
-//     clientRedis.get('foo', function(err, response){
-//         if(err) {
-//             throw err;
-//             }
-//         else {
-//             console.log(response);
-//             clientRedis.quit();
-//         }
-//     });
 
 class ControllerUser {
     static async create (req, res) {
@@ -25,7 +10,6 @@ class ControllerUser {
             let newUser = { userName, accountNumber, emailAddress, identityNumber }
             const user = await User.create(newUser)
             await clientRedis.del('usersdata')
-            // await redis.del('usersdata')
             res.json(user)
         } catch (err) {
             console.log(err)
@@ -45,12 +29,10 @@ class ControllerUser {
                     }else{
                         const users = await User.read()
                         await clientRedis.set('usersdata', JSON.stringify(users))
-                        // await redis.set('usersdata', JSON.stringify(users))
                         res.json(users)
                     }
                 }
             })
-            // let usersCache = await clientRedis.get('usersdata')
         } catch (err) {
             console.log(err)
             res.status(500).json(err)
@@ -62,7 +44,6 @@ class ControllerUser {
         try {
             const user = await User.update(id, update)
             await clientRedis.del('usersdata')
-            // await redis.del('usersdata')
             res.json(user)
         } catch (err) {
             console.log(err)
@@ -74,7 +55,6 @@ class ControllerUser {
         try {
             const user = await User.delete(id)
             await clientRedis.del('usersdata')
-            // await redis.del('usersdata')
             res.json(user)
         } catch (err) {
             console.log(err)
@@ -85,7 +65,7 @@ class ControllerUser {
     static async readByAccountNumber (req, res) {
         let { accountNumber } = req.params
         try {
-            const user = await User.readByAccountNumber(accountNumber)
+            const user = await User.readByAccountNumber(Number(accountNumber))
             res.json(user)
         } catch (err) {
             console.log(err)
@@ -95,7 +75,7 @@ class ControllerUser {
     static async readByIdentityNumber (req, res) {
         let { identityNumber } = req.params
         try {
-            const user = await User.readByIdentityNumber(identityNumber)
+            const user = await User.readByIdentityNumber(Number(identityNumber))
             res.json(user)
         } catch (err) {
             console.log(err)
@@ -104,9 +84,8 @@ class ControllerUser {
     }
 
     static async getToken (req, res) {
-        console.log(process.env.TOKEN_KEY)
         let token = jwt.sign({user: 'employer'}, process.env.TOKEN_KEY)
-        res.json(token)
+        res.json({token})
     }
 }
 
