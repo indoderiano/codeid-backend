@@ -14,7 +14,7 @@ Request body
 {
     userName,
     accountNumber,
-    emailAddress,
+    emailAddress: <must be unique>,
     identityNumber
 }
 Request headers
@@ -120,7 +120,7 @@ Request Body
 {
     userName,
     accountNumber,
-    emailAddress,
+    emailAddress: <must be unique>,
     identityNumber
 }
 Request headers
